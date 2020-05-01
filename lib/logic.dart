@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 class Bird {
@@ -36,10 +37,28 @@ class AppState {
   final List<Bird> birds;
 
   const AppState({this.birds = const []});
+
+  AppState copyWith({
+    List<Bird> birds,
+  }) {
+    return AppState(
+      birds: birds ?? this.birds,
+    );
+  }
 }
 
 class Store {
   AppState state;
+  final _controller = StreamController<AppState>.broadcast();
+
+  Stream<AppState> get changes => _controller.stream;
 
   Store(this.state);
+
+  void buyBird(BirdType type) {
+    final newBirds = [...state.birds];
+    newBirds.add(Bird(type));
+    state = state.copyWith(birds: newBirds);
+    _controller.add(state);
+  }
 }

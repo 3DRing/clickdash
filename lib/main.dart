@@ -45,17 +45,26 @@ class MainPage extends StatelessWidget {
             Expanded(
               child: Center(
                 child: SingleChildScrollView(
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.start,
-                    alignment: WrapAlignment.start,
-                    children: store.state.birds
-                        .map((bird) => BirdView(bird: bird))
-                        .toList(),
+                  child: StreamBuilder<AppState>(
+                    initialData: store.state,
+                    stream: store.changes,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return Container();
+                      final state = snapshot.data;
+                      return Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        alignment: WrapAlignment.start,
+                        children: state.birds
+                            .map((bird) => BirdView(bird: bird))
+                            .toList(),
+                      );
+                    },
                   ),
                 ),
               ),
             ),
             BirdStoreView(
+              store: store,
               items: [
                 Bird(BirdType.constant),
                 Bird(BirdType.random),
@@ -104,10 +113,12 @@ class BirdView extends StatelessWidget {
 }
 
 class BirdStoreView extends StatelessWidget {
+  final Store store;
   final List<Bird> items;
 
   const BirdStoreView({
     Key key,
+    @required this.store,
     @required this.items,
   }) : super(key: key);
 
@@ -122,8 +133,13 @@ class BirdStoreView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: items
-              .map((item) => BirdView(
-                  key: ValueKey('$BirdStoreView${item.type}'), bird: item))
+              .map(
+                (item) => BirdView(
+                  key: ValueKey('$BirdStoreView${item.type}'),
+                  bird: item,
+                  onTap: () => store.buyBird(item.type),
+                ),
+              )
               .toList(),
         ),
       ),
