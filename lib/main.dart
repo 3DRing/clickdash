@@ -55,7 +55,9 @@ class MainPage extends StatelessWidget {
                         crossAxisAlignment: WrapCrossAlignment.start,
                         alignment: WrapAlignment.start,
                         children: state.birds
-                            .map((bird) => BirdView(bird: bird))
+                            .map((bird) => BirdView(
+                                key: ValueKey('$MainPage${bird.type}'),
+                                bird: bird))
                             .toList(),
                       );
                     },
