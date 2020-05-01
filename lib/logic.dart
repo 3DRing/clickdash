@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 
 class Bird {
   final BirdType type;
 
-  Bird(this.type);
+  const Bird(this.type);
 }
 
 enum BirdType {
@@ -27,5 +28,37 @@ class BirdCalc {
         return random.nextInt(_maxRandomValue) + _minRandomValue;
     }
     return 0;
+  }
+}
+
+class AppState {
+  static const AppState initState = AppState(birds: [Bird(BirdType.constant)]);
+
+  final List<Bird> birds;
+
+  const AppState({this.birds = const []});
+
+  AppState copyWith({
+    List<Bird> birds,
+  }) {
+    return AppState(
+      birds: birds ?? this.birds,
+    );
+  }
+}
+
+class Store {
+  AppState state;
+  final _controller = StreamController<AppState>.broadcast();
+
+  Stream<AppState> get changes => _controller.stream;
+
+  Store(this.state);
+
+  void buyBird(BirdType type) {
+    final newBirds = [...state.birds];
+    newBirds.add(Bird(type));
+    state = state.copyWith(birds: newBirds);
+    _controller.add(state);
   }
 }
