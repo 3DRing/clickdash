@@ -73,6 +73,45 @@ void main() {
 
     expect(randomBirdsFinder, findsNWidgets(expectedNumberOfBirds));
   });
+
+  testWidgets('when all items are clicked many times then many birds are added',
+      (tester) async {
+    await tester.pumpWidget(TestWidget(MainPage(store: store)));
+    final constantBirdItemFinder =
+        find.byKey(ValueKey('${BirdStoreView}${BirdType.constant}'));
+    final randomBirdItemFinder =
+        find.byKey(ValueKey('${BirdStoreView}${BirdType.random}'));
+    final expectedNumberOfConstantBirds = store.state.birds
+            .where((bird) => bird.type == BirdType.constant)
+            .length +
+        50;
+    final expectedNumberOfRandomBirds =
+        store.state.birds.where((bird) => bird.type == BirdType.random).length +
+            50;
+
+    for (var i = 0; i < 100; i++) {
+      final tapTarget =
+          i % 2 == 0 ? constantBirdItemFinder : randomBirdItemFinder;
+      await tester.tap(tapTarget);
+      await tester.pump();
+    }
+
+    final constantBirdsFinder = find.byWidgetPredicate((widget) =>
+        widget.key != null &&
+        widget.key is ValueKey<String> &&
+        (widget.key as ValueKey<String>)
+            .value
+            .contains('${MainPage}${BirdType.constant}'));
+    final randomBirdsFinder = find.byWidgetPredicate((widget) =>
+        widget.key != null &&
+        widget.key is ValueKey<String> &&
+        (widget.key as ValueKey<String>)
+            .value
+            .contains('${MainPage}${BirdType.random}'));
+
+    expect(constantBirdsFinder, findsNWidgets(expectedNumberOfConstantBirds));
+    expect(randomBirdsFinder, findsNWidgets(expectedNumberOfRandomBirds));
+  });
 }
 
 class TestWidget extends StatelessWidget {

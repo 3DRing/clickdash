@@ -44,24 +44,26 @@ class MainPage extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Center(
-                child: SingleChildScrollView(
-                  child: StreamBuilder<AppState>(
-                    initialData: store.state,
-                    stream: store.changes,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) return Container();
-                      final state = snapshot.data;
-                      return Wrap(
+                child: StreamBuilder<AppState>(
+                  initialData: store.state,
+                  stream: store.changes,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return Container();
+                    final state = snapshot.data;
+                    var uniqueKey = 0;
+                    return SingleChildScrollView(
+                      child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.start,
                         alignment: WrapAlignment.start,
                         children: state.birds
                             .map((bird) => BirdView(
-                                key: ValueKey('$MainPage${bird.type}'),
+                                key: ValueKey(
+                                    '$MainPage${bird.type}${uniqueKey++}'),
                                 bird: bird))
                             .toList(),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
