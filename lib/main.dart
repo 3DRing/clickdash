@@ -42,6 +42,7 @@ class MainPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
+            WalletView(store: store),
             Expanded(
               child: Center(
                 child: StreamBuilder<AppState>(
@@ -145,6 +146,41 @@ class BirdStoreView extends StatelessWidget {
                 ),
               )
               .toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class WalletView extends StatelessWidget {
+  final Store store;
+
+  const WalletView({
+    Key key,
+    @required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      elevation: 8.0,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Баланс',
+                style: TextStyle(fontSize: 18),
+              ),
+              Text(
+                '\$${store.state.balance}',
+                style: TextStyle(fontSize: 28),
+              ),
+            ],
+          ),
         ),
       ),
     );

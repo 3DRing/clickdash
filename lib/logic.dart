@@ -32,11 +32,18 @@ class BirdCalc {
 }
 
 class AppState {
-  static const AppState initState = AppState(birds: [Bird(BirdType.constant)]);
+  static const AppState initState = AppState(
+    birds: [Bird(BirdType.constant)],
+    balance: 0,
+  );
 
+  final int balance;
   final List<Bird> birds;
 
-  const AppState({this.birds = const []});
+  const AppState({
+    this.birds = const [],
+    this.balance = 0,
+  });
 
   AppState copyWith({
     List<Bird> birds,
