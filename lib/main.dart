@@ -10,18 +10,29 @@ class Assets {
   const Assets._();
 }
 
+final store = Store(AppState.initState);
+
 void main() => runApp(App());
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainPage(),
+      home: MainPage(
+        store: store,
+      ),
     );
   }
 }
 
 class MainPage extends StatelessWidget {
+  final Store store;
+
+  const MainPage({
+    Key key,
+    @required this.store,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +42,19 @@ class MainPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Expanded(child: Container()),
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    alignment: WrapAlignment.start,
+                    children: store.state.birds
+                        .map((bird) => BirdView(bird: bird))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),
             BirdStoreView(
               items: [
                 Bird(BirdType.constant),

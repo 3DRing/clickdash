@@ -3,7 +3,7 @@ import 'dart:math';
 class Bird {
   final BirdType type;
 
-  Bird(this.type);
+  const Bird(this.type);
 }
 
 enum BirdType {
@@ -28,4 +28,18 @@ class BirdCalc {
     }
     return 0;
   }
+}
+
+class AppState {
+  static const AppState initState = AppState(birds: [Bird(BirdType.constant)]);
+
+  final List<Bird> birds;
+
+  const AppState({this.birds = const []});
+}
+
+class Store {
+  AppState state;
+
+  Store(this.state);
 }
