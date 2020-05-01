@@ -1,3 +1,4 @@
+import 'package:clickdash/logic.dart';
 import 'package:flutter/material.dart';
 
 const appName = 'ClickDash';
@@ -26,9 +27,44 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: Text(appName),
+          child: BirdView(bird: Bird(BirdType.constant)),
         ),
       ),
     );
+  }
+}
+
+class BirdView extends StatelessWidget {
+  static const size = 60.0;
+
+  final Bird bird;
+  final VoidCallback onTap;
+
+  const BirdView({
+    Key key,
+    @required this.bird,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      child: InkResponse(
+        child: Image.asset(_asset(bird.type)),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  String _asset(BirdType type) {
+    switch (type) {
+      case BirdType.constant:
+        return Assets.dashBlueImage;
+      case BirdType.random:
+        return Assets.dashGreenImage;
+    }
+    return Assets.dashBlueImage;
   }
 }
