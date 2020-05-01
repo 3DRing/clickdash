@@ -36,6 +36,21 @@ void main() {
 
     expect(constantBirdFinder, findsOneWidget);
   });
+
+  testWidgets('when constant item is clicked then a constant bird is added',
+      (tester) async {
+    await tester.pumpWidget(TestWidget(MainPage(store: store)));
+    final constantBirdItemFinder =
+        find.byKey(ValueKey('${BirdStoreView}${BirdType.constant}'));
+
+    await tester.tap(constantBirdItemFinder);
+    await tester.pump();
+
+    final constantBirdsFinder =
+        find.byKey(ValueKey('${MainPage}${BirdType.constant}'));
+
+    expect(constantBirdsFinder, findsNWidgets(2));
+  });
 }
 
 class TestWidget extends StatelessWidget {
