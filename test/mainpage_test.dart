@@ -1,13 +1,21 @@
+import 'dart:math';
+
 import 'package:clickdash/logic.dart';
 import 'package:clickdash/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'mocks.dart';
+
 void main() {
+  Random random;
+  BirdCalc calc;
   Store store;
 
   setUp(() {
-    store = Store(AppState.initState);
+    random = MockRandom();
+    calc = BirdCalc(random);
+    store = Store(AppState.initState, calc);
   });
 
   testWidgets('when initialized then store is on the screen', (tester) async {
@@ -51,7 +59,7 @@ void main() {
     await tester.pump();
 
     final constantBirdsFinder = find.byWidgetPredicate((widget) =>
-    widget.key != null &&
+        widget.key != null &&
         widget.key is ValueKey<String> &&
         (widget.key as ValueKey<String>)
             .value
@@ -73,7 +81,7 @@ void main() {
     await tester.pump();
 
     final randomBirdsFinder = find.byWidgetPredicate((widget) =>
-    widget.key != null &&
+        widget.key != null &&
         widget.key is ValueKey<String> &&
         (widget.key as ValueKey<String>)
             .value

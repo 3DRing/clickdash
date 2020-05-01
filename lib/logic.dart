@@ -46,9 +46,11 @@ class AppState {
   });
 
   AppState copyWith({
+    int balance,
     List<Bird> birds,
   }) {
     return AppState(
+      balance: balance ?? this.balance,
       birds: birds ?? this.birds,
     );
   }
@@ -57,15 +59,23 @@ class AppState {
 class Store {
   AppState state;
   final _controller = StreamController<AppState>.broadcast();
+  final BirdCalc calc;
 
   Stream<AppState> get changes => _controller.stream;
 
-  Store(this.state);
+  Store(this.state, this.calc);
 
   void buyBird(BirdType type) {
     final newBirds = [...state.birds];
     newBirds.add(Bird(type));
     state = state.copyWith(birds: newBirds);
+    _controller.add(state);
+  }
+
+  void earn(Bird bird) {
+    final earned = calc.getTransaction(bird);
+    final newBalance = state.balance + earned;
+    state = state.copyWith(balance: newBalance);
     _controller.add(state);
   }
 }

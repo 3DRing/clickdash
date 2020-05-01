@@ -4,6 +4,8 @@ import 'package:clickdash/logic.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import 'mocks.dart';
+
 void main() {
   test('when const bird type then transaction is constant', () {
     // arrange
@@ -41,5 +43,3 @@ void main() {
     verify(random.nextInt(maxRandomValue)).called(4);
   });
 }
-
-class MockRandom extends Mock implements Random {}

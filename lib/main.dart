@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:clickdash/logic.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +12,9 @@ class Assets {
   const Assets._();
 }
 
-final store = Store(AppState.initState);
+final random = Random();
+final calc = BirdCalc(random);
+final store = Store(AppState.initState, calc);
 
 void main() => runApp(App());
 
