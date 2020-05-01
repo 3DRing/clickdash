@@ -61,10 +61,14 @@ class MainPage extends StatelessWidget {
                         crossAxisAlignment: WrapCrossAlignment.start,
                         alignment: WrapAlignment.start,
                         children: state.birds
-                            .map((bird) => BirdView(
+                            .map(
+                              (bird) => BirdView(
                                 key: ValueKey(
                                     '$MainPage${bird.type}${uniqueKey++}'),
-                                bird: bird))
+                                bird: bird,
+                                onTap: () => store.earn(bird),
+                              ),
+                            )
                             .toList(),
                       ),
                     );
@@ -179,9 +183,17 @@ class WalletView extends StatelessWidget {
                 'Баланс',
                 style: TextStyle(fontSize: 18),
               ),
-              Text(
-                '\$${store.state.balance}',
-                style: TextStyle(fontSize: 28),
+              StreamBuilder<AppState>(
+                initialData: store.state,
+                stream: store.changes,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return Container();
+                  final state = snapshot.data;
+                  return Text(
+                    '\$${state.balance}',
+                    style: TextStyle(fontSize: 28),
+                  );
+                },
               ),
             ],
           ),
