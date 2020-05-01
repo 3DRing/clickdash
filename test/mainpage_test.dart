@@ -32,7 +32,7 @@ void main() {
       (tester) async {
     await tester.pumpWidget(TestWidget(MainPage(store: store)));
     final constantBirdFinder =
-        find.byKey(ValueKey('${MainPage}${BirdType.constant}'));
+        find.byKey(ValueKey('${MainPage}${BirdType.constant}0'));
 
     expect(constantBirdFinder, findsOneWidget);
   });
@@ -50,8 +50,12 @@ void main() {
     await tester.tap(constantBirdItemFinder);
     await tester.pump();
 
-    final constantBirdsFinder =
-        find.byKey(ValueKey('${MainPage}${BirdType.constant}'));
+    final constantBirdsFinder = find.byWidgetPredicate((widget) =>
+    widget.key != null &&
+        widget.key is ValueKey<String> &&
+        (widget.key as ValueKey<String>)
+            .value
+            .contains('${MainPage}${BirdType.constant}'));
 
     expect(constantBirdsFinder, findsNWidgets(expectedNumberOfBirds));
   });
@@ -68,8 +72,12 @@ void main() {
     await tester.tap(randomBirdItemFinder);
     await tester.pump();
 
-    final randomBirdsFinder =
-        find.byKey(ValueKey('${MainPage}${BirdType.random}'));
+    final randomBirdsFinder = find.byWidgetPredicate((widget) =>
+    widget.key != null &&
+        widget.key is ValueKey<String> &&
+        (widget.key as ValueKey<String>)
+            .value
+            .contains('${MainPage}${BirdType.random}'));
 
     expect(randomBirdsFinder, findsNWidgets(expectedNumberOfBirds));
   });
