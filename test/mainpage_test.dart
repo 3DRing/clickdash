@@ -16,6 +16,17 @@ void main() {
 
     expect(birdStoreFinder, findsOneWidget);
   });
+
+  testWidgets('when initialized then items are seen', (tester) async {
+    await tester.pumpWidget(TestWidget(MainPage(store: store)));
+    final constantBirdItemFinder =
+        find.byKey(ValueKey('${BirdStoreView}${BirdType.constant}'));
+    final randomBirdItemFinder =
+        find.byKey(ValueKey('${BirdStoreView}${BirdType.random}'));
+
+    expect(constantBirdItemFinder, findsOneWidget);
+    expect(randomBirdItemFinder, findsOneWidget);
+  });
 }
 
 class TestWidget extends StatelessWidget {

@@ -121,7 +121,10 @@ class BirdStoreView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
-          children: items.map((item) => BirdView(bird: item)).toList(),
+          children: items
+              .map((item) => BirdView(
+                  key: ValueKey('$BirdStoreView${item.type}'), bird: item))
+              .toList(),
         ),
       ),
     );
