@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:clickdash/logic.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +12,9 @@ class Assets {
   const Assets._();
 }
 
-final store = Store(AppState.initState);
+final random = Random();
+final calc = BirdCalc(random);
+final store = Store(AppState.initState, calc);
 
 void main() => runApp(App());
 
@@ -42,6 +46,7 @@ class MainPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
+            WalletView(store: store),
             Expanded(
               child: Center(
                 child: StreamBuilder<AppState>(
@@ -56,10 +61,14 @@ class MainPage extends StatelessWidget {
                         crossAxisAlignment: WrapCrossAlignment.start,
                         alignment: WrapAlignment.start,
                         children: state.birds
-                            .map((bird) => BirdView(
+                            .map(
+                              (bird) => BirdView(
                                 key: ValueKey(
                                     '$MainPage${bird.type}${uniqueKey++}'),
-                                bird: bird))
+                                type: bird.type,
+                                onTap: () => store.earn(bird),
+                              ),
+                            )
                             .toList(),
                       ),
                     );
@@ -67,13 +76,7 @@ class MainPage extends StatelessWidget {
                 ),
               ),
             ),
-            BirdStoreView(
-              store: store,
-              items: [
-                Bird(BirdType.constant),
-                Bird(BirdType.random),
-              ],
-            ),
+            BirdStoreView(store: store),
           ],
         ),
       ),
@@ -84,12 +87,12 @@ class MainPage extends StatelessWidget {
 class BirdView extends StatelessWidget {
   static const size = 60.0;
 
-  final Bird bird;
+  final BirdType type;
   final VoidCallback onTap;
 
   const BirdView({
     Key key,
-    @required this.bird,
+    @required this.type,
     this.onTap,
   }) : super(key: key);
 
@@ -99,7 +102,7 @@ class BirdView extends StatelessWidget {
       width: size,
       height: size,
       child: InkResponse(
-        child: Image.asset(_asset(bird.type)),
+        child: Image.asset(_asset(type)),
         onTap: onTap,
       ),
     );
@@ -118,12 +121,10 @@ class BirdView extends StatelessWidget {
 
 class BirdStoreView extends StatelessWidget {
   final Store store;
-  final List<Bird> items;
 
   const BirdStoreView({
     Key key,
     @required this.store,
-    @required this.items,
   }) : super(key: key);
 
   @override
@@ -132,19 +133,75 @@ class BirdStoreView extends StatelessWidget {
       elevation: 8.0,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: items
-              .map(
-                (item) => BirdView(
-                  key: ValueKey('$BirdStoreView${item.type}'),
-                  bird: item,
-                  onTap: () => store.buyBird(item.type),
-                ),
-              )
-              .toList(),
+        child: StreamBuilder<AppState>(
+            initialData: store.state,
+            stream: store.changes,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return Container();
+              final state = snapshot.data;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: state.items
+                    .map(
+                      (item) => Opacity(
+                        opacity: item.price <= state.balance ? 1.0 : 0.2,
+                        child: BirdView(
+                          key: ValueKey('$BirdStoreView${item.type}'),
+                          type: item.type,
+                          onTap: item.price <= state.balance
+                              ? () => store.buyBird(item)
+                              : null,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
+            }),
+      ),
+    );
+  }
+}
+
+class WalletView extends StatelessWidget {
+  final Store store;
+
+  const WalletView({
+    Key key,
+    @required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      elevation: 8.0,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Баланс',
+                style: TextStyle(fontSize: 18),
+              ),
+              StreamBuilder<AppState>(
+                initialData: store.state,
+                stream: store.changes,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return Container();
+                  final state = snapshot.data;
+                  return Text(
+                    '\$${state.balance}',
+                    key: ValueKey('${WalletView}balance'),
+                    style: TextStyle(fontSize: 28),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
