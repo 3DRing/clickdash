@@ -4,6 +4,9 @@ import 'package:test/test.dart';
 void main() {
   FlutterDriver driver;
 
+  final firstBirdFinder = find.byValueKey('MainPageBirdType.constant0');
+  final balanceFinder = find.byValueKey('WalletViewbalance');
+
   setUpAll(() async {
     driver = await FlutterDriver.connect();
   });
@@ -14,5 +17,17 @@ void main() {
     }
   });
 
-  test('init', () async {});
+  test('when init then 0 balance', () async {
+    final actualBalance = await driver.getText(balanceFinder);
+    expect(actualBalance, '\$0');
+  });
+
+  test('when clicking constant bird then balance increments', () async {
+    await driver.tap(firstBirdFinder);
+    await driver.tap(firstBirdFinder);
+    await driver.tap(firstBirdFinder);
+
+    final actualBalance = await driver.getText(balanceFinder);
+    expect(actualBalance, '\$3');
+  });
 }

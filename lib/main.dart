@@ -183,6 +183,7 @@ class WalletView extends StatelessWidget {
                   final state = snapshot.data;
                   return Text(
                     '\$${state.balance}',
+                    key: ValueKey('${WalletView}balance'),
                     style: TextStyle(fontSize: 28),
                   );
                 },
