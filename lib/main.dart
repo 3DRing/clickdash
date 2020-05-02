@@ -133,20 +133,32 @@ class BirdStoreView extends StatelessWidget {
       elevation: 8.0,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: store.state.items
-              .map(
-                (item) => BirdView(
-                  key: ValueKey('$BirdStoreView${item.type}'),
-                  type: item.type,
-                  onTap: () => store.buyBird(item),
-                ),
-              )
-              .toList(),
-        ),
+        child: StreamBuilder<AppState>(
+            initialData: store.state,
+            stream: store.changes,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return Container();
+              final state = snapshot.data;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: state.items
+                    .map(
+                      (item) => Opacity(
+                        opacity: item.price <= state.balance ? 1.0 : 0.2,
+                        child: BirdView(
+                          key: ValueKey('$BirdStoreView${item.type}'),
+                          type: item.type,
+                          onTap: item.price <= state.balance
+                              ? () => store.buyBird(item)
+                              : null,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
+            }),
       ),
     );
   }
