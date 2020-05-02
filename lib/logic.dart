@@ -7,6 +7,13 @@ class Bird {
   const Bird(this.type);
 }
 
+class BirdItem {
+  final BirdType type;
+  final int price;
+
+  const BirdItem(this.type, this.price);
+}
+
 enum BirdType {
   constant,
   random,
@@ -33,25 +40,33 @@ class BirdCalc {
 
 class AppState {
   static const AppState initState = AppState(
-    birds: [Bird(BirdType.constant)],
     balance: 0,
+    birds: [Bird(BirdType.constant)],
+    items: [
+      BirdItem(BirdType.constant, 25),
+      BirdItem(BirdType.random, 100),
+    ],
   );
 
   final int balance;
   final List<Bird> birds;
+  final List<BirdItem> items;
 
   const AppState({
-    this.birds = const [],
     this.balance = 0,
+    this.birds = const [],
+    this.items = const [],
   });
 
   AppState copyWith({
     int balance,
     List<Bird> birds,
+    List<BirdItem> items,
   }) {
     return AppState(
       balance: balance ?? this.balance,
       birds: birds ?? this.birds,
+      items: items ?? this.items,
     );
   }
 }
@@ -65,10 +80,11 @@ class Store {
 
   Store(this.state, this.calc);
 
-  void buyBird(BirdType type) {
+  void buyBird(BirdItem item) {
     final newBirds = [...state.birds];
-    newBirds.add(Bird(type));
-    state = state.copyWith(birds: newBirds);
+    newBirds.add(Bird(item.type));
+    final newBalance = state.balance - item.price;
+    state = state.copyWith(balance: newBalance, birds: newBirds);
     _controller.add(state);
   }
 

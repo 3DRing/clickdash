@@ -65,7 +65,7 @@ class MainPage extends StatelessWidget {
                               (bird) => BirdView(
                                 key: ValueKey(
                                     '$MainPage${bird.type}${uniqueKey++}'),
-                                bird: bird,
+                                type: bird.type,
                                 onTap: () => store.earn(bird),
                               ),
                             )
@@ -76,13 +76,7 @@ class MainPage extends StatelessWidget {
                 ),
               ),
             ),
-            BirdStoreView(
-              store: store,
-              items: [
-                Bird(BirdType.constant),
-                Bird(BirdType.random),
-              ],
-            ),
+            BirdStoreView(store: store),
           ],
         ),
       ),
@@ -93,12 +87,12 @@ class MainPage extends StatelessWidget {
 class BirdView extends StatelessWidget {
   static const size = 60.0;
 
-  final Bird bird;
+  final BirdType type;
   final VoidCallback onTap;
 
   const BirdView({
     Key key,
-    @required this.bird,
+    @required this.type,
     this.onTap,
   }) : super(key: key);
 
@@ -108,7 +102,7 @@ class BirdView extends StatelessWidget {
       width: size,
       height: size,
       child: InkResponse(
-        child: Image.asset(_asset(bird.type)),
+        child: Image.asset(_asset(type)),
         onTap: onTap,
       ),
     );
@@ -127,12 +121,10 @@ class BirdView extends StatelessWidget {
 
 class BirdStoreView extends StatelessWidget {
   final Store store;
-  final List<Bird> items;
 
   const BirdStoreView({
     Key key,
     @required this.store,
-    @required this.items,
   }) : super(key: key);
 
   @override
@@ -145,12 +137,12 @@ class BirdStoreView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
-          children: items
+          children: store.state.items
               .map(
                 (item) => BirdView(
                   key: ValueKey('$BirdStoreView${item.type}'),
-                  bird: item,
-                  onTap: () => store.buyBird(item.type),
+                  type: item.type,
+                  onTap: () => store.buyBird(item),
                 ),
               )
               .toList(),
