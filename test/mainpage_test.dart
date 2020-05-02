@@ -47,6 +47,7 @@ void main() {
 
   testWidgets('when constant item is clicked then a constant bird is added',
       (tester) async {
+        store = Store(AppState.initState.copyWith(balance: 25), calc);
     await tester.pumpWidget(TestWidget(MainPage(store: store)));
     final constantBirdItemFinder =
         find.byKey(ValueKey('${BirdStoreView}${BirdType.constant}'));
@@ -70,6 +71,7 @@ void main() {
 
   testWidgets('when random item is clicked then a random bird is added',
       (tester) async {
+        store = Store(AppState.initState.copyWith(balance: 100), calc);
     await tester.pumpWidget(TestWidget(MainPage(store: store)));
     final randomBirdItemFinder =
         find.byKey(ValueKey('${BirdStoreView}${BirdType.random}'));
@@ -92,6 +94,7 @@ void main() {
 
   testWidgets('when all items are clicked many times then many birds are added',
       (tester) async {
+        store = Store(AppState.initState.copyWith(balance: 6250), calc);
     await tester.pumpWidget(TestWidget(MainPage(store: store)));
     final constantBirdItemFinder =
         find.byKey(ValueKey('${BirdStoreView}${BirdType.constant}'));
