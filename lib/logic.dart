@@ -17,6 +17,7 @@ class BirdItem {
 enum BirdType {
   constant,
   random,
+  combo,
 }
 
 class BirdCalc {
@@ -27,12 +28,14 @@ class BirdCalc {
 
   const BirdCalc(this.random);
 
-  int getTransaction(Bird bird) {
+  int getTransaction(Bird bird, {List<Bird> birds = const []}) {
     switch (bird.type) {
       case BirdType.constant:
         return 1;
       case BirdType.random:
-        return random.nextInt(_maxRandomValue) + _minRandomValue;
+        return random.nextInt(_minRandomValue) + _maxRandomValue;
+      case BirdType.combo:
+        return 5 * birds.where((bird) => bird.type == BirdType.combo).length;
     }
     return 0;
   }
@@ -45,6 +48,7 @@ class AppState {
     items: [
       BirdItem(BirdType.constant, 25),
       BirdItem(BirdType.random, 100),
+      BirdItem(BirdType.combo, 250),
     ],
   );
 
@@ -89,7 +93,7 @@ class Store {
   }
 
   void earn(Bird bird) {
-    final earned = calc.getTransaction(bird);
+    final earned = calc.getTransaction(bird, birds: state.birds);
     final newBalance = state.balance + earned;
     state = state.copyWith(balance: newBalance);
     _controller.add(state);

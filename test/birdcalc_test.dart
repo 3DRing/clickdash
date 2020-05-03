@@ -42,4 +42,52 @@ void main() {
 
     verify(random.nextInt(maxRandomValue)).called(4);
   });
+
+  test('when single combo bird type then transaction is 1', () {
+    final random = Random();
+    final calc = BirdCalc(random);
+    final bird = Bird(BirdType.combo);
+
+    final result = calc.getTransaction(bird, birds: [Bird(BirdType.combo)]);
+
+    expect(result, 5);
+  });
+
+  test('when many combo birds then transaction is bigger each time', () {
+    final random = Random();
+    final calc = BirdCalc(random);
+    final bird = Bird(BirdType.combo);
+
+    var result = calc.getTransaction(bird,
+        birds: [Bird(BirdType.combo), Bird(BirdType.constant)]);
+
+    expect(result, 5);
+
+    result = calc.getTransaction(bird, birds: [
+      Bird(BirdType.combo),
+      Bird(BirdType.constant),
+      Bird(BirdType.random),
+    ]);
+
+    expect(result, 5);
+
+    result = calc.getTransaction(bird, birds: [
+      Bird(BirdType.combo),
+      Bird(BirdType.constant),
+      Bird(BirdType.random),
+      Bird(BirdType.combo),
+    ]);
+
+    expect(result, 10);
+
+    result = calc.getTransaction(bird, birds: [
+      Bird(BirdType.combo),
+      Bird(BirdType.constant),
+      Bird(BirdType.random),
+      Bird(BirdType.combo),
+      Bird(BirdType.combo),
+    ]);
+
+    expect(result, 15);
+  });
 }
