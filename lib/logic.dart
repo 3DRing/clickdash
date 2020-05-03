@@ -33,7 +33,7 @@ class BirdCalc {
       case BirdType.constant:
         return 1;
       case BirdType.random:
-        return random.nextInt(_maxRandomValue) + _minRandomValue;
+        return random.nextInt(_minRandomValue) + _maxRandomValue;
       case BirdType.combo:
         return 5 * birds.where((bird) => bird.type == BirdType.combo).length;
     }
