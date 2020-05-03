@@ -8,6 +8,7 @@ const appName = 'ClickDash';
 class Assets {
   static const dashBlueImage = 'assets/dash_blue.png';
   static const dashGreenImage = 'assets/dash_green.png';
+  static const dashOrangeImage = 'assets/dash_orange.png';
 
   const Assets._();
 }
@@ -114,6 +115,8 @@ class BirdView extends StatelessWidget {
         return Assets.dashBlueImage;
       case BirdType.random:
         return Assets.dashGreenImage;
+      case BirdType.combo:
+        return Assets.dashOrangeImage;
     }
     return Assets.dashBlueImage;
   }
